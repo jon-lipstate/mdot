@@ -1745,6 +1745,7 @@ name = "mdot"
 version = "0.1.0"
 dependencies = [
  "amethyst",
+ "log",
  "quote 1.0.2",
 ]
 

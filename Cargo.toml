@@ -9,6 +9,7 @@ amethyst = "0.13.0"
 #rand="0.7.3"
 #quote 1.0.3 is broken, need to force 1.0.2, also need to force in the cargo.lock file
 quote = "1.0.2"
+log="0.4.8"
 
 [features]
 default = ["vulkan", "nightly"]
