@@ -1,7 +1,8 @@
 #![allow(unused_imports)]
 mod states;
-use crate::states::MenuState;
+use crate::states::{MenuState, SplashState};
 use amethyst::{
+    assets::HotReloadBundle,
     core::transform::TransformBundle,
     input::{is_close_requested, is_key_down, InputBundle, StringBindings},
     //ecs::prelude::{ReadExpect, Resources, SystemData},
@@ -11,6 +12,7 @@ use amethyst::{
         types::DefaultBackend,
         RenderingBundle,
     },
+    ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
 
@@ -20,26 +22,33 @@ fn main() -> amethyst::Result<()> {
         .level_for("gfx_backend_vulkan", amethyst::LogLevelFilter::Warn)
         .start();
 
-    let app_root = application_root_dir()?;
+    let app_root = application_root_dir()?; //Cargo.toml level
 
     let config_dir = app_root.join("config");
-    let display_config_path = config_dir.join("display.ron");
+    let assets_dir = app_root.join("assets");
+    let display_config_path = config_dir.join("display.ron"); //display config path
 
     let game_data = GameDataBuilder::default()
+        //Transform Bundle 1st:
+        .with_bundle(TransformBundle::new())?
         //Add Input Bundle:
         .with_bundle(InputBundle::<StringBindings>::new())?
+        //UI Bundle:
+        .with_bundle(UiBundle::<StringBindings>::new())?
+        //Hot Reloading Bundle:
+        .with_bundle(HotReloadBundle::default())?
         //Rendering Bundle:
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
                     RenderToWindow::from_config_path(display_config_path)
-                        .with_clear([0.34, 0.36, 0.52, 1.0]),
+                        .with_clear([0.3, 0.3, 0.35, 1.0]),
                 )
-                .with_plugin(RenderFlat2D::default()),
-        )?
-        .with_bundle(TransformBundle::new())?;
+                .with_plugin(RenderUi::default()), // required for UI
+                                                   //.with_plugin(RenderFlat2D::default()),
+        )?;
 
-    let mut game = Application::new("/", MenuState, game_data)?;
+    let mut game = Application::new(assets_dir, SplashState::default(), game_data)?;
     game.run();
 
     Ok(())

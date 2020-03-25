@@ -19,7 +19,7 @@ use amethyst::{
 //         Self { ui_res, widgets }
 //     }
 // }
-
+#[derive(Default, Debug)]
 pub struct MenuState;
 impl SimpleState for MenuState {
     fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>) {}
@@ -51,7 +51,7 @@ impl SimpleState for MenuState {
                         key_code: kc,
                         scancode: _sc,
                     } => log::info!("KeyPressed: {:?}", kc),
-                    //Outside of Game Window
+                    //OUTSIDE of Game Window
                     InputEvent::MouseMoved {
                         delta_x: _dx,
                         delta_y: _dy,
