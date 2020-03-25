@@ -1,4 +1,5 @@
 #![allow(unused_imports)]
+use crate::states::{game::GameState, splash::SplashState};
 use amethyst::{
     core::Hidden,
     ecs::{Entity, WorldExt},
@@ -8,21 +9,23 @@ use amethyst::{
     winit::VirtualKeyCode,
     State, StateData, StateEvent, Trans,
 };
-// pub struct MenuState {
-//     ui_res: UiResources,
-//     menuOptions: HashMap<Entity, UiEffect>,
-// }
-// impl MenuState {
-//     pub fn new(ui_res: UiResources) -> Self {
-//         let menuOptions = HashMap::new();
 
-//         Self { ui_res, widgets }
-//     }
-// }
 #[derive(Default, Debug)]
-pub struct MenuState;
+pub struct MenuState {
+    ui_root: Option<Entity>,
+    button_start: Option<Entity>,
+    button_load: Option<Entity>,
+    button_options: Option<Entity>,
+    button_credits: Option<Entity>,
+}
+
 impl SimpleState for MenuState {
-    fn on_start(&mut self, _data: StateData<'_, GameData<'_, '_>>) {}
+    fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
+        let world = data.world;
+
+        self.ui_root =
+            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("menu.ron", ())));
+    }
 
     fn handle_event(
         &mut self,

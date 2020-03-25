@@ -3,7 +3,7 @@ mod states;
 use crate::states::{MenuState, SplashState};
 use amethyst::{
     assets::HotReloadBundle,
-    core::transform::TransformBundle,
+    core::{frame_limiter::FrameRateLimitStrategy, transform::TransformBundle},
     input::{is_close_requested, is_key_down, InputBundle, StringBindings},
     //ecs::prelude::{ReadExpect, Resources, SystemData},
     prelude::*,
@@ -15,6 +15,7 @@ use amethyst::{
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
+use std::time::Duration;
 
 fn main() -> amethyst::Result<()> {
     //Add Filters for logs to prevent spam:
@@ -48,7 +49,12 @@ fn main() -> amethyst::Result<()> {
                                                    //.with_plugin(RenderFlat2D::default()),
         )?;
 
-    let mut game = Application::new(assets_dir, SplashState::default(), game_data)?;
+    let mut game = Application::build(assets_dir, SplashState::default())?
+        .with_frame_limit(
+            FrameRateLimitStrategy::SleepAndYield(Duration::from_micros(1)),
+            60,
+        )
+        .build(game_data)?;
     game.run();
 
     Ok(())
