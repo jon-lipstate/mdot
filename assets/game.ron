@@ -1,0 +1,57 @@
+#![enable(implicit_some)]
+Container(
+    transform: (
+        id: "background",
+        anchor: Middle,
+        stretch: XY( x_margin: 0., y_margin: 0., keep_aspect_ratio: false),
+        width: 400.,
+        height: 400.,
+    ),
+    background: SolidColor(0.6, 0.6, 1.0, 0.8),
+    children: [
+        // Parenting test
+        Container(
+            transform: (
+                id: "top_right",
+                x: -32.,
+                y: -16.,
+                width: 64.,
+                height: 32.,
+                anchor: TopRight,
+                mouse_reactive: true,
+                draggable: true,
+            ),
+            background: SolidColor(0.09, 0.02, 0.25, 1.0),
+            children: [
+                Image(
+                    transform: (
+                        id: "middle_top_right",
+                        width: 32.,
+                        height: 16.,
+                        anchor: Middle,
+                        stretch: XY( x_margin: 0., y_margin: 5., keep_aspect_ratio: false),
+                        mouse_reactive: true,
+                        draggable: true,
+                    ),
+                    image: SolidColor(0.18, 0.05, 0.85, 1.0),
+                ),
+            ]
+        ),
+
+        // Amethyst logo
+        Image(
+            transform: (
+                id: "logo",
+                y: 32.,
+                width: 64.,
+                height: 64.,
+                tab_order: 1,
+                anchor: BottomMiddle,
+                mouse_reactive: true,
+                draggable: true,
+            ),
+            image: Texture(File("logo_transparent.png", ("IMAGE", ()))),
+        ),
+        
+    ],
+)

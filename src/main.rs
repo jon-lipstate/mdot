@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 mod states;
-use crate::states::{MenuState, SplashState};
+use crate::states::{GameState, MenuState, SplashState};
 use amethyst::{
     assets::HotReloadBundle,
     core::{frame_limiter::FrameRateLimitStrategy, transform::TransformBundle},
@@ -49,7 +49,7 @@ fn main() -> amethyst::Result<()> {
                                                    //.with_plugin(RenderFlat2D::default()),
         )?;
 
-    let mut game = Application::build(assets_dir, SplashState::default())?
+    let mut game = Application::build(assets_dir, GameState::default())? //SplashState::default())?
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_micros(1)),
             60,
