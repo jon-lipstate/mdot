@@ -1,0 +1,80 @@
+#![enable(implicit_some)]
+Container(
+    transform: (
+        id: "background",
+        anchor: Middle,
+        stretch: XY( x_margin: 0., y_margin: 0., keep_aspect_ratio: false),
+        width: 20.,
+        height: 20.,
+    ),
+    //background: SolidColor(0.6, 0.6, 1.0, 0.8),
+    children: [
+        //Amethyst logo
+        Image(
+            transform: (
+                id: "logo",
+                x: -24.,
+                y: -24.,
+                width: 40.,
+                height: 40.,
+                tab_order: 1,
+                anchor: TopRight,
+                //mouse_reactive: true,
+                opaque: false,
+            ),
+            image: Texture(File("img/logo_transparent.png", ("IMAGE", ()))),
+            
+        ),
+
+        Label(
+            transform: (
+                id: "fps",
+                x: 75.,
+                y: -16,
+                width: 200.,
+                height: 25.,
+                tab_order: 2,
+                anchor: TopLeft,
+                transparent: true,
+            ),
+            text: (
+                text: "Initializing",
+                //font: File("font/square.ttf", ("TTF", ())),
+                font_size: 25.,
+                color: (0.93, 0.9, 0.999, 0.2),
+            )
+        ),
+
+
+        Container(
+            transform: (
+                id: "chat_bar",
+                width: 1536.,
+                height: 400.,
+                anchor: BottomRight,
+                //hidden: true,
+            ),
+            background: SolidColor(0.015, 0.005, 0.05, 0.95),
+            children: [
+                Label(
+                    transform: (
+                        id: "ui_chat_log",
+                        x: 4.,
+                        y: -4.,
+                        z: 2.,
+                        width: 1536.,
+                        height: 400.,
+                        anchor: Middle,
+                    ),
+                    text: (
+                        text: "Multiline\nNested in container\nTEST!\nlorem\nipsum\ndolor\nlines\n123\nlines\nlines\nlines\nlines\nlines\nlines\nlines\nlines\nlines\nlines\nlast line",
+                        font_size: 18.,
+                        color: (0.5, 0.5, 0.5, 0.9),
+                        line_mode: Wrap,
+                        align: TopLeft,
+                    )
+                ),
+            ]
+        ),
+    ],
+)

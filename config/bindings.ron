@@ -1,0 +1,16 @@
+(
+    axes: {
+        Vertical: Emulated(pos: Key(P), neg: Key(Q)),
+        Horizontal: Emulated(pos: Key(R), neg: Key(L)),
+    },
+    actions: {
+        Move(North):[[Key(W)]],
+        Move(East):[[Key(D)]],
+        Move(South):[[Key(S)]],
+        Move(West):[[Key(A)]],
+        Melee: [[Key(Space)]],
+        ToggleChat:[[Key(Grave)]],
+        ChatDataEntry:[[Key(Return)]],
+        ToggleInventory:[[Key(I)]],
+    },
+)

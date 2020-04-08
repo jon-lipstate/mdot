@@ -1,11 +1,7 @@
-#![allow(unused_imports)]
-mod states;
-use crate::states::{GameState, MenuState, SplashState};
+#![allow(unused_imports, dead_code)]
 use amethyst::{
-    assets::HotReloadBundle,
     core::{frame_limiter::FrameRateLimitStrategy, transform::TransformBundle},
-    input::{is_close_requested, is_key_down, InputBundle, StringBindings},
-    //ecs::prelude::{ReadExpect, Resources, SystemData},
+    input::{InputBundle, StringBindings},
     prelude::*,
     renderer::{
         plugins::{RenderFlat2D, RenderToWindow},
@@ -13,46 +9,59 @@ use amethyst::{
         RenderingBundle,
     },
     ui::{RenderUi, UiBundle},
-    utils::application_root_dir,
+    utils::{application_root_dir, fps_counter::FpsCounterBundle},
 };
+mod components;
+mod constants;
+mod key_bindings;
+mod resources;
+mod states;
+mod systems;
+use key_bindings::*;
+use states::PlayState;
 use std::time::Duration;
 
 fn main() -> amethyst::Result<()> {
-    //Add Filters for logs to prevent spam:
     amethyst::Logger::from_config(Default::default())
         .level_for("gfx_backend_vulkan", amethyst::LogLevelFilter::Warn)
         .start();
 
-    let app_root = application_root_dir()?; //Cargo.toml level
+    let app_root = application_root_dir()?;
 
-    let config_dir = app_root.join("config");
     let assets_dir = app_root.join("assets");
-    let display_config_path = config_dir.join("display.ron"); //display config path
+    let config_dir = app_root.join("config");
+    let display_config = config_dir.join("display.ron");
+    let key_bindings_config_path = config_dir.join("bindings.ron");
+    let input_bundle =
+        InputBundle::<GameBindingTypes>::new().with_bindings_from_file(key_bindings_config_path)?;
 
     let game_data = GameDataBuilder::default()
-        //Transform Bundle 1st:
+        .with_bundle(input_bundle)?
+        // .with_bundle(
+        //     InputBundle::<StringBindings>::new()
+        //         .with_bindings_from_file(&key_bindings_config_path)?,
+        // )?
         .with_bundle(TransformBundle::new())?
-        //Add Input Bundle:
-        .with_bundle(InputBundle::<StringBindings>::new())?
-        //UI Bundle:
         .with_bundle(UiBundle::<StringBindings>::new())?
-        //Hot Reloading Bundle:
-        .with_bundle(HotReloadBundle::default())?
-        //Rendering Bundle:
+        .with_bundle(FpsCounterBundle)?
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
-                    RenderToWindow::from_config_path(display_config_path)
-                        .with_clear([0.3, 0.3, 0.35, 1.0]),
+                    RenderToWindow::from_config_path(display_config)?
+                        .with_clear([0.34, 0.36, 0.52, 1.0]),
                 )
-                .with_plugin(RenderUi::default()), // required for UI
-                                                   //.with_plugin(RenderFlat2D::default()),
-        )?;
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderUi::default()),
+        )?
+        .with(systems::MapLoader, "map_system", &[])
+        .with(systems::InputSystem::default(), "input_system2", &[]); //cant use 'input_system' it is reserved by bundle i think
 
-    let mut game = Application::build(assets_dir, GameState::default())? //SplashState::default())?
+    //let mut game = Application::new(assets_dir, PlayState::default(), game_data)?;
+
+    let mut game = Application::build(assets_dir, PlayState::default())?
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_micros(1)),
-            60,
+            120,
         )
         .build(game_data)?;
     game.run();

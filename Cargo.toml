@@ -1,18 +1,35 @@
 [package]
-name = "mdot"
+name = "mdot2"
 version = "0.1.0"
-authors = ["J. Lipstate"]
+authors = []
 edition = "2018"
 
 [dependencies]
-amethyst = "0.13.0"
-#rand="0.7.3"
-#quote 1.0.3 is broken, need to force 1.0.2, also need to force in the cargo.lock file
-quote = "1.0.2"
-log="0.4.8"
+amethyst = "0.15.0"
+log = "*"
+tiled = "*"
+serde = "*"
+#amethyst_gltf = "*"
+#rand = "*"
+#amethyst_physics = "*"
+#amethyst_nphysics = "*"
 
 [features]
-default = ["vulkan", "nightly"]
+# default = ["vulkan"]
+# empty = ["amethyst/empty"]
+# metal = ["amethyst/metal"]
+# vulkan = ["amethyst/vulkan"]
+default = ["vulkan"]
 
 vulkan = ["amethyst/vulkan"]
-nightly = ["amethyst/nightly"]
+
+[profile.dev]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false

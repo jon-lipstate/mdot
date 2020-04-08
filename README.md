@@ -1,26 +1,21 @@
-# mdot
+# mdot2
 
 ## How to run
 
-To run the game, use
+To run the game, run the following command, which defaults to the `vulkan` graphics backend:
 
-```
-cargo run --features "vulkan"
-```
-
-on Windows and Linux, and
-
-```
-cargo run --features "metal"
+```bash
+cargo run
 ```
 
-on macOS.
+Windows and Linux users may explicitly choose `"vulkan"` with the following command:
 
-For building without any graphics backend, you can use
-
-```
-cargo run --features "empty"
+```bash
+cargo run --no-default-features --features "vulkan"
 ```
 
-but be aware that as soon as you need any rendering you won't be able to run your game when using
-the `empty` feature.
+Mac OS X users may explicitly choose `"metal"` with the following command:
+
+```bash
+cargo run --no-default-features --features "metal"
+```
