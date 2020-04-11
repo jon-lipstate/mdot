@@ -17,7 +17,7 @@ mod key_bindings;
 mod resources;
 mod states;
 mod systems;
-use key_bindings::*;
+use key_bindings::UserInputBindingTypes;
 use states::PlayState;
 use std::time::Duration;
 
@@ -32,8 +32,8 @@ fn main() -> amethyst::Result<()> {
     let config_dir = app_root.join("config");
     let display_config = config_dir.join("display.ron");
     let key_bindings_config_path = config_dir.join("bindings.ron");
-    let input_bundle =
-        InputBundle::<GameBindingTypes>::new().with_bindings_from_file(key_bindings_config_path)?;
+    let input_bundle = InputBundle::<UserInputBindingTypes>::new()
+        .with_bindings_from_file(key_bindings_config_path)?;
 
     let game_data = GameDataBuilder::default()
         .with_bundle(input_bundle)?
@@ -54,7 +54,8 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderUi::default()),
         )?
         .with(systems::MapLoader, "map_system", &[])
-        .with(systems::InputSystem::default(), "input_system2", &[]); //cant use 'input_system' it is reserved by bundle i think
+        //.with(systems::InputSystem::default(), "input_system2", &[]) //cant use 'input_system' it is reserved by bundle i think
+        .with_bundle(systems::InputSystemBundle)?;
 
     //let mut game = Application::new(assets_dir, PlayState::default(), game_data)?;
 

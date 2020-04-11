@@ -16,12 +16,11 @@ pub enum Direction {
     West,
 }
 #[derive(Clone, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ActionBinding {
+pub enum UserActions {
     Move(Direction),
     Melee,
-    ToggleChat,
-    ChatDataEntry,
-    ToggleInventory,
+    TypingMode,
+    TypedData(String), //Indirect
 }
 //TODO: SWITCH TO MOVE(NORTH) PER BELOW:
 // actions: {
@@ -34,16 +33,16 @@ impl Display for AxisBinding {
         write!(f, "{:?}", self)
     }
 }
-impl Display for ActionBinding {
+impl Display for UserActions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
 #[derive(Debug)]
-pub struct GameBindingTypes;
+pub struct UserInputBindingTypes;
 
-impl BindingTypes for GameBindingTypes {
+impl BindingTypes for UserInputBindingTypes {
     type Axis = AxisBinding;
-    type Action = ActionBinding;
+    type Action = UserActions;
 }

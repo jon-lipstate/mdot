@@ -1,76 +1,164 @@
 use crate::constants;
-use crate::key_bindings::Direction;
-use crate::key_bindings::*;
+use crate::key_bindings::{Direction, UserActions, UserInputBindingTypes};
+
 use amethyst::{
-    core::{timing::Time, transform::Transform},
+    core::{bundle::SystemBundle, timing::Time, transform::Transform, SystemDesc},
     derive::SystemDesc,
-    ecs::{Read, System, SystemData, Write},
-    input::{InputHandler, StringBindings},
+    ecs::{DispatcherBuilder, Read, System, SystemData, World, Write},
+    input::{InputEvent, InputHandler, VirtualKeyCode},
+    shrev::{EventChannel, ReaderId},
 };
 use std::time::Duration;
 
-// struct ActionEntered {
-//     Action: ActionBinding,
-//     ExpiryTime: Duration,
-// }
-#[derive(SystemDesc)]
+pub struct InputSystemBundle;
+impl<'a, 'b> SystemBundle<'a, 'b> for InputSystemBundle {
+    fn build(
+        self,
+        world: &mut World,
+        builder: &mut DispatcherBuilder<'a, 'b>,
+    ) -> Result<(), amethyst::Error> {
+        builder.add(InputSystemDesc::default().build(world), "inp_system", &[]);
+        Ok(())
+    }
+}
+
+#[derive(Default, Debug)]
+pub struct InputSystemDesc;
+
+impl<'a, 'b> SystemDesc<'a, 'b, InputSystem> for InputSystemDesc {
+    fn build(self, world: &mut World) -> InputSystem {
+        <InputSystem as System<'_>>::SystemData::setup(world);
+        let reader = world
+            .fetch_mut::<EventChannel<InputEvent<UserInputBindingTypes>>>()
+            .register_reader();
+        InputSystem::new(reader)
+    }
+}
+
+#[derive(Debug, SystemDesc)]
 pub struct InputSystem {
-    latched_actions: Vec<(ActionBinding, f64)>, //expiry time in f64
+    reader: ReaderId<InputEvent<UserInputBindingTypes>>,
+    latched_actions: Vec<(UserActions, f64)>, //expiry time in f64
+    latched_keys: Vec<(VirtualKeyCode, f64)>, //expiry time in f64
+    typing_mode: bool,
+    typed_input: Vec<char>,
 }
 
 impl InputSystem {
-    ///Iterates on latched_actions & removes any expired action
-    fn remove_expired_latches(&mut self, current_time: f64) {
-        self.latched_actions.retain(|(action, expiry_time)| {
-            return current_time < *expiry_time;
-        });
-    }
-    /// 1. Checks if the key is down
-    /// 2. Checks that an action of the same type does not exist in latched_actions.
-    /// 3. If new action is unique, pushes into latched_actions
-    fn try_latch(&mut self, action: ActionBinding, expiry_time: f64) -> bool {
-        //Check that the key is actually down:
-        if !input.action_is_down(&action).unwrap() {
-            return false;
-        }
-        let mut can_latch = self.latched_actions.iter().any(|a| match a {
-            (action, _) => {
-                return false;
-            }
-            _ => true,
-        });
-        //When vec is empty, the closure above will return false
-        if self.latched_actions.len() == 0 {
-            can_latch = true;
-        }
-        if can_latch {
-            self.latched_actions.push((action, expiry_time));
-        }
-        return can_latch;
-    }
-}
-
-impl Default for InputSystem {
-    fn default() -> Self {
+    pub fn new(reader: ReaderId<InputEvent<UserInputBindingTypes>>) -> Self {
         Self {
             latched_actions: Vec::new(),
+            latched_keys: Vec::new(),
+            typing_mode: false,
+            typed_input: Vec::new(),
+            reader,
         }
+    }
+    ///Iterates on latched_actions & removes any expired action
+    fn remove_expired_latches(&mut self, current_time: f64) {
+        self.latched_actions.retain(|(_action, expiry_time)| {
+            return current_time < *expiry_time;
+        });
+        self.latched_keys.retain(|(_action, expiry_time)| {
+            return current_time < *expiry_time;
+        });
     }
 }
 
 impl<'s> System<'s> for InputSystem {
-    type SystemData = (Read<'s, InputHandler<GameBindingTypes>>, Read<'s, Time>); //, Write<'s, Input>);
+    type SystemData = (
+        Read<'s, InputHandler<UserInputBindingTypes>>,
+        Read<'s, Time>,
+        Read<'s, EventChannel<InputEvent<UserInputBindingTypes>>>,
+        //  Write<'s, CommandQueue>,
+    );
 
-    fn run(&mut self, (input, time): Self::SystemData) {
+    fn run(&mut self, (input, time, input_event_channel /*mut command_queue*/): Self::SystemData) {
         let t = time.absolute_real_time().as_secs_f64();
+        let action_expiry = t + constants::ACTION_DELAY_MS as f64 / 1000.;
+        let typing_expiry = t + constants::TYPING_DELAY_MS as f64 / 1000.;
         self.remove_expired_latches(t);
-        //Movement Actions First:
-        let delay = constants::MOVEMENT_DELAY_MS as f64 / 1000.;
-        if self.try_latch(ActionBinding::Move(Direction::North), t + delay) {
-            log::warn!("INSIDE MOVE(North), EMIT COMMAND");
-        }
-        if self.try_latch(ActionBinding::Move(Direction::East), t + delay) {
-            log::warn!("INSIDE MOVE(East), EMIT COMMAND");
+
+        let user_actions = vec![
+            UserActions::TypingMode,
+            UserActions::Move(Direction::North),
+            UserActions::Move(Direction::East),
+            UserActions::Move(Direction::South),
+            UserActions::Move(Direction::West),
+            UserActions::Melee,
+        ];
+
+        let input_events = input_event_channel.read(&mut self.reader);
+        if self.typing_mode {
+            let return_key = 0x0d as char;
+            let escape_key = 0x1b as char;
+            let backspace_key = 0x08 as char;
+            let del_key = 0x7f as char;
+            for e in input_events {
+                match e {
+                    InputEvent::KeyTyped(key) => {
+                        if key == &return_key {
+                            let data = self.typed_input.iter().collect::<String>();
+                            if data.len() > 0 {
+                                log::info!("action: TypedData({:?})", data);
+                                //command_queue.add(Command::TypedData(data));
+                            }
+                            self.typed_input = Vec::new();
+                            self.typing_mode = false;
+                            log::info!("TypingMode {}", self.typing_mode);
+                            try_latch(
+                                UserActions::TypingMode,
+                                &mut self.latched_actions,
+                                action_expiry,
+                            );
+                        } else if key == &escape_key {
+                            self.typing_mode = false;
+                            log::info!("TypingMode {}", self.typing_mode);
+                        } else if key == &backspace_key || key == &del_key {
+                            self.typed_input.pop();
+                            log::info!("{:?}", self.typed_input.iter().collect::<String>());
+                        } else {
+                            self.typed_input.push(*key);
+                            log::info!("{:?}", self.typed_input.iter().collect::<String>());
+                        }
+                    }
+                    _ => (),
+                }
+            }
+        } else {
+            for action in user_actions {
+                if input.action_is_down(&action).unwrap() {
+                    if try_latch(action.clone(), &mut self.latched_actions, action_expiry) {
+                        if action != UserActions::TypingMode {
+                            log::info!("action: {:?}", action);
+                        //command_queue.add(command.clone());
+                        } else {
+                            self.typing_mode = !self.typing_mode;
+                            try_latch(
+                                VirtualKeyCode::Return,
+                                &mut self.latched_keys,
+                                typing_expiry,
+                            ); // ensure latched to prevent runaway entry
+                            log::info!("TypingMode {}", self.typing_mode);
+                        }
+                    }
+                }
+            }
         }
     }
+}
+/// 1. Checks if the key is down
+/// 2. Checks that an action of the same type does not exist in latched_actions.
+/// 3. If new action is unique, pushes into latched_actions
+fn try_latch<I: PartialEq>(val: I, vec: &mut Vec<(I, f64)>, expiry_time: f64) -> bool {
+    let mut can_latch = !vec.iter().any(|a| a.0 == val);
+    //When vec is empty, the closure above will return false
+    if vec.len() == 0 {
+        can_latch = true;
+    }
+    if can_latch {
+        vec.push((val, expiry_time));
+        //self.latched_keys.push((key, expiry_time));
+    }
+    return can_latch;
 }
