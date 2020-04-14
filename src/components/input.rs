@@ -1,4 +1,4 @@
-use crate::defintions::Direction;
+use crate::defintions::{Direction, UserActions};
 use amethyst::{
     assets::{AssetPrefab, PrefabData},
     core::math::Vector2,
@@ -10,13 +10,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Component, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
-pub struct TilePosition {
-    pub position: Vector2<usize>,
+pub struct InputComponent {
+    pub action: UserActions,
 }
-impl Default for TilePosition {
+impl Default for InputComponent {
     fn default() -> Self {
         Self {
-            position: Vector2::zeros(),
+            action: UserActions::None,
         }
     }
 }

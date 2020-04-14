@@ -1,5 +1,9 @@
-use crate::constants;
-use crate::key_bindings::{Direction, UserActions, UserInputBindingTypes};
+use crate::{
+    components::{Motion, PlayerComponent},
+    constants,
+    defintions::{Direction, UserActions},
+    key_bindings::UserInputBindingTypes,
+};
 
 use amethyst::{
     core::{bundle::SystemBundle, timing::Time, transform::Transform, SystemDesc},
@@ -73,12 +77,11 @@ impl<'s> System<'s> for InputSystem {
         //  Write<'s, CommandQueue>,
     );
 
-    fn run(&mut self, (input, time, input_event_channel /*mut command_queue*/): Self::SystemData) {
+    fn run(&mut self, (input, time, input_event_channel): Self::SystemData) {
         let t = time.absolute_real_time().as_secs_f64();
         let action_expiry = t + constants::ACTION_DELAY_MS as f64 / 1000.;
         let typing_expiry = t + constants::TYPING_DELAY_MS as f64 / 1000.;
         self.remove_expired_latches(t);
-
         let user_actions = vec![
             UserActions::TypingMode,
             UserActions::Move(Direction::North),

@@ -10,13 +10,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Component, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
-pub struct TilePosition {
-    pub position: Vector2<usize>,
+pub struct Orientation {
+    pub direction: Direction,
 }
-impl Default for TilePosition {
+impl Default for Orientation {
     fn default() -> Self {
         Self {
-            position: Vector2::zeros(),
+            direction: Direction::South,
         }
     }
 }

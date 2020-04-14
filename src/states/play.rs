@@ -1,4 +1,7 @@
-use crate::resources::SpritesContainer;
+use crate::{
+    components::{InputComponent, Motion, Orientation, TilePosition},
+    resources::SpritesContainer,
+};
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
     controls::{CursorHideSystem, MouseFocusUpdateSystemDesc},
@@ -52,16 +55,30 @@ impl SimpleState for PlayState {
         let world = data.world;
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         init_camera(world, &dimensions);
-        // self.sprite_sheet_handle.replace(load_sprite_sheet(world));
-        // load_tile(world, self.sprite_sheet_handle.clone().unwrap());
         //tiled
-        world.register::<crate::components::TilePosition>();
-        world.insert(crate::resources::Map::default());
+        // world.register::<crate::components::TilePosition>();
+        // world.insert(crate::resources::Map::default());
+        //world.insert(sprites);
+        let ssh = load_sprite_sheet(world);
+        // load_tile(world, self.sprite_sheet_handle.clone().unwrap());
+        let mut player_transform = Transform::default();
+        player_transform.set_translation_xyz(300.0, 300.0, 0.0);
         //
         let sprites = SpritesContainer::new(&world);
-        world.insert(sprites);
-        self.ui_root =
-            Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/play.ron", ())));
+        let player_sprite = get_tile(14, ssh);
+        // self.ui_root =
+        //     Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/play.ron", ())));
+        //player
+        world
+            .create_entity()
+            .with(Motion::default())
+            .with(TilePosition::default())
+            .with(Orientation::default())
+            //.with(InputComponent::default())
+            // .with(crate::components::CreatureTag::default())
+            .with(player_transform)
+            .with(player_sprite)
+            .build();
     }
     fn on_stop(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         if let Some(root_entity) = self.ui_root {
@@ -157,6 +174,12 @@ fn load_sprite_sheet(world: &mut World) -> Handle<SpriteSheet> {
         (),
         &sprite_sheet_store,
     )
+}
+fn get_tile(tile: usize, sprite_sheet_handle: Handle<SpriteSheet>) -> SpriteRender {
+    SpriteRender {
+        sprite_sheet: sprite_sheet_handle,
+        sprite_number: tile,
+    }
 }
 fn load_tile(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
     let mut local_transform = Transform::default();

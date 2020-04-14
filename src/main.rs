@@ -1,6 +1,9 @@
 #![allow(unused_imports, dead_code)]
 use amethyst::{
+    assets::{Prefab, PrefabData},
     core::{frame_limiter::FrameRateLimitStrategy, transform::TransformBundle},
+    derive::PrefabData,
+    ecs::{storage::DenseVecStorage, Component},
     input::{InputBundle, StringBindings},
     prelude::*,
     renderer::{
@@ -13,13 +16,20 @@ use amethyst::{
 };
 mod components;
 mod constants;
+mod defintions;
 mod key_bindings;
 mod resources;
 mod states;
 mod systems;
 use key_bindings::UserInputBindingTypes;
+use serde::{Deserialize, Serialize};
 use states::PlayState;
 use std::time::Duration;
+
+// #[derive(Clone, Copy, Component, Debug, Default, Deserialize, Serialize, PrefabData)]
+// #[prefab(Component)]
+// #[serde(deny_unknown_fields)]
+// pub struct Position(pub f32, pub f32, pub f32);
 
 fn main() -> amethyst::Result<()> {
     amethyst::Logger::from_config(Default::default())
@@ -53,7 +63,8 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default())
                 .with_plugin(RenderUi::default()),
         )?
-        .with(systems::MapLoader, "map_system", &[])
+        //.with(systems::MapLoader, "map_system", &[])
+        .with(systems::MotionSystem, "motion_system", &[])
         //.with(systems::InputSystem::default(), "input_system2", &[]) //cant use 'input_system' it is reserved by bundle i think
         .with_bundle(systems::InputSystemBundle)?;
 
