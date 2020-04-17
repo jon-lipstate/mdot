@@ -1,5 +1,5 @@
 use crate::{
-    components::{Motion, PlayerComponent},
+    components::{Moving, PlayerComponent, TilePosition},
     constants,
     defintions::{Direction, UserActions},
     key_bindings::UserInputBindingTypes,
@@ -8,7 +8,8 @@ use crate::{
 use amethyst::{
     core::{bundle::SystemBundle, timing::Time, transform::Transform, SystemDesc},
     derive::SystemDesc,
-    ecs::{DispatcherBuilder, Read, System, SystemData, World, Write},
+    ecs::prelude::*,
+    ecs::{DispatcherBuilder, Read, ReadStorage, System, SystemData, World, Write, WriteStorage},
     input::{InputEvent, InputHandler, VirtualKeyCode},
     shrev::{EventChannel, ReaderId},
 };
@@ -74,14 +75,21 @@ impl<'s> System<'s> for InputSystem {
         Read<'s, InputHandler<UserInputBindingTypes>>,
         Read<'s, Time>,
         Read<'s, EventChannel<InputEvent<UserInputBindingTypes>>>,
-        //  Write<'s, CommandQueue>,
+        ReadStorage<'s, PlayerComponent>,
+        ReadStorage<'s, TilePosition>,
+        WriteStorage<'s, Moving>,
+        Entities<'s>,
     );
 
-    fn run(&mut self, (input, time, input_event_channel): Self::SystemData) {
+    fn run(
+        &mut self,
+        (input, time, input_event_channel, pcs, tile_positions, mut movements, entities): Self::SystemData,
+    ) {
         let t = time.absolute_real_time().as_secs_f64();
         let action_expiry = t + constants::ACTION_DELAY_MS as f64 / 1000.;
         let typing_expiry = t + constants::TYPING_DELAY_MS as f64 / 1000.;
         self.remove_expired_latches(t);
+        let mut cmd_action = UserActions::None; //feed to Moving
         let user_actions = vec![
             UserActions::TypingMode,
             UserActions::Move(Direction::North),
@@ -134,7 +142,8 @@ impl<'s> System<'s> for InputSystem {
                     if try_latch(action.clone(), &mut self.latched_actions, action_expiry) {
                         if action != UserActions::TypingMode {
                             log::info!("action: {:?}", action);
-                        //command_queue.add(command.clone());
+                            //command_queue.add(command.clone());
+                            cmd_action = action;
                         } else {
                             self.typing_mode = !self.typing_mode;
                             try_latch(
@@ -146,6 +155,21 @@ impl<'s> System<'s> for InputSystem {
                         }
                     }
                 }
+            }
+        }
+        for (p, _, e) in (&tile_positions, &pcs, &entities).join() {
+            match &cmd_action {
+                UserActions::Move(dir) => {
+                    let m = Moving {
+                        start_tile_position: p.position.clone(),
+                        direction: dir.clone(),
+                        value: 1,
+                        time_remaining: constants::ACTION_DELAY_MS as f32 / 1000.,
+                        duration: constants::ACTION_DELAY_MS as f32 / 1000.,
+                    };
+                    movements.insert(e, m).unwrap();
+                }
+                _ => (),
             }
         }
     }

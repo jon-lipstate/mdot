@@ -17,6 +17,7 @@ use amethyst::{
 mod components;
 mod constants;
 mod defintions;
+mod events;
 mod key_bindings;
 mod resources;
 mod states;

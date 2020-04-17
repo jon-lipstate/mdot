@@ -1,8 +1,8 @@
 mod tile_position;
 pub use self::tile_position::TilePosition;
 
-mod motion;
-pub use self::motion::Motion;
+mod moving;
+pub use self::moving::Moving;
 
 mod orientation;
 pub use self::orientation::Orientation;

@@ -7,7 +7,7 @@ use amethyst::{
 #[derive(Default)]
 pub struct SpritesContainer {
     pub sprites: Vec<SpriteRender>,
-    pub text: Vec<SpriteRender>,
+    //pub text: Vec<SpriteRender>,
 }
 
 fn load(world: &World, img: String, ron: String, num_sprites: u32) -> Vec<SpriteRender> {
@@ -42,12 +42,12 @@ impl SpritesContainer {
                 "sprites/master16.ron".to_string(),
                 864,
             ),
-            text: load(
-                world,
-                "fonts/text.png".to_string(),
-                "fonts/text.ron".to_string(),
-                225,
-            ),
+            // text: load(
+            //     world,
+            //     "fonts/text.png".to_string(),
+            //     "fonts/text.ron".to_string(),
+            //     225,
+            // ),
         }
     }
 }

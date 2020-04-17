@@ -1,5 +1,5 @@
 use crate::{
-    components::{InputComponent, Motion, Orientation, TilePosition},
+    components::{InputComponent, Moving, Orientation, PlayerComponent, TilePosition},
     resources::SpritesContainer,
 };
 use amethyst::{
@@ -56,25 +56,25 @@ impl SimpleState for PlayState {
         let dimensions = (*world.read_resource::<ScreenDimensions>()).clone();
         init_camera(world, &dimensions);
         //tiled
-        // world.register::<crate::components::TilePosition>();
-        // world.insert(crate::resources::Map::default());
-        //world.insert(sprites);
-        let ssh = load_sprite_sheet(world);
-        // load_tile(world, self.sprite_sheet_handle.clone().unwrap());
-        let mut player_transform = Transform::default();
-        player_transform.set_translation_xyz(300.0, 300.0, 0.0);
-        //
+        world.register::<crate::components::TilePosition>();
+        world.insert(crate::resources::Map::default());
         let sprites = SpritesContainer::new(&world);
-        let player_sprite = get_tile(14, ssh);
+        world.insert(sprites);
+        let ssh = load_sprite_sheet(world);
+        load_tile(world, ssh.clone());
+        let mut player_transform = Transform::default();
+        //player_transform.set_translation_xyz(300.0, 300.0, 0.0);
+        //
+        let player_sprite = get_tile(324, ssh);
         // self.ui_root =
         //     Some(world.exec(|mut creator: UiCreator<'_>| creator.create("ui/play.ron", ())));
         //player
         world
             .create_entity()
-            .with(Motion::default())
+            //.with(Motion::default())
             .with(TilePosition::default())
             .with(Orientation::default())
-            //.with(InputComponent::default())
+            .with(PlayerComponent::default())
             // .with(crate::components::CreatureTag::default())
             .with(player_transform)
             .with(player_sprite)
@@ -187,7 +187,7 @@ fn load_tile(world: &mut World, sprite_sheet_handle: Handle<SpriteSheet>) {
 
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle,
-        sprite_number: 14,
+        sprite_number: 540,
     };
 
     world

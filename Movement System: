@@ -1,0 +1,38 @@
+Movement System:
+> Move Tiles
+> add Request animation component
+> handle the movement duration
+
+
+animation component:
+> total_duration
+> sprite_handle (?)
+> Vec<(tileId, pct_complete)>
+
+animation request component:                        <--- this could be an event instead
+> animation_name - e.g. "walk_east_animation"
+
+Animation System:
+Convert AnimationRequests into Animations
+
+
+SpriteSheetPrefab
+
+
+I'm also new to ECS but hopefully this would help: I would use the timing resource to set up some timers detailing the duration of the animation. The animation system then doesn't have to rely on velocity or acceleration; it simply linearly interpolates the transform based on the start position and end position
+For example — when you want to add an animation to your sprite, all you need to do is attach a new component to it
+Say — an animation request component
+This component would hold solely information about where you want the sprite to go and (maybe how long it should take to get there)
+Then your animation system could loop over these components but NOT components with ongoing animations (ill get to that in a sec)
+For each of these entities with only the animation request component — the animation system would attach an additional component — say an "ongoing animation component" which would detail the start position, final position, and the start time and duration of the animation
+(And perhaps it would also remove the animation request)
+Alternatively you could do the animation request using an event as well so that you're not just attaching components then removing them right after
+Anyway, finally the animation system would loop through all components with the ongoing animation component and it could linearly interpolate between the start and end position using the time information
+And when done it would just remove the ongoing animation component (and perhaps send an event signaling that the animation finished — or perhaps at this time is when the "animation request" component would be removed. This is up to you)
+Whats important here is that whatever system is requesting this animation only needs to know the bare minimum — where it wants to go and optionally how long it should take to get there
+You can take it a step further and just send out an event that says "this sprite has moved tiles." and have a totally separate system that requests the animation. It could be a "sprite movement animation system" that will intercept sprite movement events and generate the necessary animations
+Which is actually fairly clean because then all animation details are in this one system — any time you want to change an animation you go in to that system, find the appropriate event, and change the details there
+The downside is now you're generating a lot of events (maybe, depending on implementation details)
+Hope that helps!
+Oh another benefit to that idea is that now you can generate your animations in prefabs. On "sprite movement animation system" startup you load the prefabs that have components which describe the animation. You can make your own prefab loader to do that. Then, instead of attaching this animation information to an entity it just adds it to some resource which is basically a hash map that would map the event type to a particular animation
+This is what SpriteSheetPrefab does — when add_to_entity is called it actually adds the spritesheet to a resource instead. You could borrow that idea to add your animation details to a resource

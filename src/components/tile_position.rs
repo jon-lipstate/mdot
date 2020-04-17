@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Component, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
 pub struct TilePosition {
-    pub position: Vector2<usize>,
+    pub position: Vector2<isize>,
 }
 impl Default for TilePosition {
     fn default() -> Self {
