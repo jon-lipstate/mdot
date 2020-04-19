@@ -12,3 +12,6 @@ pub use self::input::InputComponent;
 
 mod player;
 pub use self::player::PlayerComponent;
+
+mod animation;
+pub use self::animation::Animation;

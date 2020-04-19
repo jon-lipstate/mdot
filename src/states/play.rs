@@ -75,6 +75,7 @@ impl SimpleState for PlayState {
             .with(TilePosition::default())
             .with(Orientation::default())
             .with(PlayerComponent::default())
+            .with(InputComponent::default())
             // .with(crate::components::CreatureTag::default())
             .with(player_transform)
             .with(player_sprite)

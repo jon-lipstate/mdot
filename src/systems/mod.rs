@@ -7,3 +7,9 @@ pub use self::input::InputSystemBundle;
 
 mod motion;
 pub use self::motion::MotionSystem;
+
+mod action;
+pub use self::action::ActionSystem;
+
+mod animation;
+pub use self::animation::AnimationSystem;

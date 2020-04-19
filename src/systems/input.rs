@@ -1,5 +1,5 @@
 use crate::{
-    components::{Moving, PlayerComponent, TilePosition},
+    components::{InputComponent, Moving, PlayerComponent, TilePosition},
     constants,
     defintions::{Direction, UserActions},
     key_bindings::UserInputBindingTypes,
@@ -77,19 +77,20 @@ impl<'s> System<'s> for InputSystem {
         Read<'s, EventChannel<InputEvent<UserInputBindingTypes>>>,
         ReadStorage<'s, PlayerComponent>,
         ReadStorage<'s, TilePosition>,
-        WriteStorage<'s, Moving>,
+        WriteStorage<'s, InputComponent>,
+        //WriteStorage<'s, Moving>,
         Entities<'s>,
     );
 
     fn run(
         &mut self,
-        (input, time, input_event_channel, pcs, tile_positions, mut movements, entities): Self::SystemData,
+        (input, time, input_event_channel, pcs, tile_positions, mut input_components, entities): Self::SystemData,
     ) {
         let t = time.absolute_real_time().as_secs_f64();
         let action_expiry = t + constants::ACTION_DELAY_MS as f64 / 1000.;
         let typing_expiry = t + constants::TYPING_DELAY_MS as f64 / 1000.;
         self.remove_expired_latches(t);
-        let mut cmd_action = UserActions::None; //feed to Moving
+        let mut cmd_action = None::<UserActions>;
         let user_actions = vec![
             UserActions::TypingMode,
             UserActions::Move(Direction::North),
@@ -143,7 +144,7 @@ impl<'s> System<'s> for InputSystem {
                         if action != UserActions::TypingMode {
                             log::info!("action: {:?}", action);
                             //command_queue.add(command.clone());
-                            cmd_action = action;
+                            cmd_action = Some(action);
                         } else {
                             self.typing_mode = !self.typing_mode;
                             try_latch(
@@ -157,20 +158,22 @@ impl<'s> System<'s> for InputSystem {
                 }
             }
         }
-        for (p, _, e) in (&tile_positions, &pcs, &entities).join() {
-            match &cmd_action {
-                UserActions::Move(dir) => {
-                    let m = Moving {
-                        start_tile_position: p.position.clone(),
-                        direction: dir.clone(),
-                        value: 1,
-                        time_remaining: constants::ACTION_DELAY_MS as f32 / 1000.,
-                        duration: constants::ACTION_DELAY_MS as f32 / 1000.,
-                    };
-                    movements.insert(e, m).unwrap();
-                }
-                _ => (),
-            }
+        //Apply to player's input:
+        for (inp, _) in (&mut input_components, &pcs).join() {
+            inp.action = cmd_action.clone();
+            // match &cmd_action {
+            //     UserActions::Move(dir) => {
+            //         let m = Moving {
+            //             start_tile_position: p.position.clone(),
+            //             direction: dir.clone(),
+            //             value: 1,
+            //             time_remaining: constants::ACTION_DELAY_MS as f32 / 1000.,
+            //             duration: constants::ACTION_DELAY_MS as f32 / 1000.,
+            //         };
+            //         input_components.insert(e, m).unwrap();
+            //     }
+            //     _ => (),
+            // }
         }
     }
 }

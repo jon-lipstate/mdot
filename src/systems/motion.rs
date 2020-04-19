@@ -1,5 +1,5 @@
 use crate::{
-    components::{Moving, Orientation, TilePosition},
+    components::{InputComponent, Moving, Orientation, TilePosition},
     constants,
     defintions::Direction,
 };
@@ -16,23 +16,33 @@ impl<'s> System<'s> for MotionSystem {
         WriteStorage<'s, TilePosition>,
         WriteStorage<'s, Orientation>,
         WriteStorage<'s, Transform>,
+        ReadStorage<'s, InputComponent>,
         Read<'s, Time>,
         Entities<'s>,
     );
 
     fn run(
         &mut self,
-        (mut movements, mut tile_positions, mut orientations, mut transforms, time, entities): Self::SystemData,
+        (
+            mut movements,
+            mut tile_positions,
+            mut orientations,
+            mut transforms,
+            input_components,
+            time,
+            entities,
+        ): Self::SystemData,
     ) {
         let delta_seconds = time.delta_seconds();
         let frame = time.frame_number();
         let mut entities_to_remove: Vec<Entity> = Vec::new();
-        for (motion, tile_pos, orientation, transform, entity) in (
+        for (motion, tile_pos, orientation, transform, entity, input) in (
             &mut movements,
             &mut tile_positions,
             &mut orientations,
             &mut transforms,
             &entities,
+            &input_components,
         )
             .join()
         {

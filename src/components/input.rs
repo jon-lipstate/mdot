@@ -11,12 +11,18 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Component, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
 pub struct InputComponent {
-    pub action: UserActions,
+    pub action: Option<UserActions>,
 }
 impl Default for InputComponent {
     fn default() -> Self {
         Self {
-            action: UserActions::None,
+            action: Option::None,
         }
+    }
+}
+
+impl InputComponent {
+    pub fn clear_action(&mut self) {
+        self.action = None::<UserActions>;
     }
 }

@@ -66,6 +66,8 @@ fn main() -> amethyst::Result<()> {
         )?
         //.with(systems::MapLoader, "map_system", &[])
         .with(systems::MotionSystem, "motion_system", &[])
+        .with(systems::ActionSystem, "action_system", &[])
+        .with(systems::AnimationSystem, "animation_system", &[])
         //.with(systems::InputSystem::default(), "input_system2", &[]) //cant use 'input_system' it is reserved by bundle i think
         .with_bundle(systems::InputSystemBundle)?;
 
