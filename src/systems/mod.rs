@@ -13,3 +13,6 @@ pub use self::action::ActionSystem;
 
 mod animation;
 pub use self::animation::AnimationSystem;
+
+mod despawn;
+pub use self::despawn::DespawnSystem;
