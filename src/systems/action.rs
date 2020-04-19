@@ -45,15 +45,10 @@ impl<'s> System<'s> for ActionSystem {
             mut parents,
         ): Self::SystemData,
     ) {
-        let delta_seconds = time.delta_seconds();
-        let frame = time.frame_number();
-        let mut entities_to_remove: Vec<Entity> = Vec::new();
         for (entity, input, tile, orientation) in
             (&entities, &input_components, &tile_positions, &orientations).join()
         {
-            //log::info!("action sys");
             if input.action.is_some() {
-                log::info!("action {:?}", input.action);
                 match input.action.clone().unwrap() {
                     UserActions::Melee => {
                         let xf = match orientation.direction {

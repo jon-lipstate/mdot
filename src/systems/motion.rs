@@ -16,7 +16,6 @@ impl<'s> System<'s> for MotionSystem {
         WriteStorage<'s, TilePosition>,
         WriteStorage<'s, Orientation>,
         WriteStorage<'s, Transform>,
-        ReadStorage<'s, InputComponent>,
         Read<'s, Time>,
         Entities<'s>,
     );
@@ -28,21 +27,18 @@ impl<'s> System<'s> for MotionSystem {
             mut tile_positions,
             mut orientations,
             mut transforms,
-            input_components,
             time,
             entities,
         ): Self::SystemData,
     ) {
         let delta_seconds = time.delta_seconds();
-        let frame = time.frame_number();
         let mut entities_to_remove: Vec<Entity> = Vec::new();
-        for (motion, tile_pos, orientation, transform, entity, input) in (
+        for (motion, tile_pos, orientation, transform, entity) in (
             &mut movements,
             &mut tile_positions,
             &mut orientations,
             &mut transforms,
             &entities,
-            &input_components,
         )
             .join()
         {
@@ -54,8 +50,8 @@ impl<'s> System<'s> for MotionSystem {
             //Check if out of map bounds:
             //TODO
             //Move to Specified Tile:
-            let start_x = tile_pos.position.data[0] as f32 * constants::PLAYER_MOVE;
-            let start_y = tile_pos.position.data[1] as f32 * constants::PLAYER_MOVE;
+            // let start_x = tile_pos.position.data[0] as f32 * constants::PLAYER_MOVE;
+            // let start_y = tile_pos.position.data[1] as f32 * constants::PLAYER_MOVE;
             if motion.time_remaining > 0. {
                 let move_pixels = motion.value as f32 * constants::PLAYER_MOVE / 768.
                     * motion.duration
@@ -82,7 +78,7 @@ impl<'s> System<'s> for MotionSystem {
                         Direction::East => tile_pos.position.data[0] += motion.value as isize,
                         Direction::West => tile_pos.position.data[0] -= motion.value as isize,
                     };
-                    log::info!("Moved to {:?}", tile_pos.position.data);
+                    //log::info!("Moved to {:?}", tile_pos.position.data);
                 }
                 motion.time_remaining -= delta_seconds;
             } else {

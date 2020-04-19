@@ -62,8 +62,7 @@ impl SimpleState for PlayState {
         world.insert(sprites);
         let ssh = load_sprite_sheet(world);
         load_tile(world, ssh.clone());
-        let mut player_transform = Transform::default();
-        //player_transform.set_translation_xyz(300.0, 300.0, 0.0);
+        let player_transform = Transform::default();
         //
         let player_sprite = get_tile(324, ssh);
         // self.ui_root =
@@ -91,27 +90,27 @@ impl SimpleState for PlayState {
         self.ui_root = None;
         self.fps_display = None;
     }
-    fn handle_event(
-        &mut self,
-        mut _data: StateData<'_, GameData<'_, '_>>,
-        event: StateEvent,
-    ) -> SimpleTrans {
-        if let StateEvent::Window(event) = &event {
-            // Check if the window should be closed
-            if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
-                return Trans::Quit;
-            }
+    // fn handle_event(
+    //     &mut self,
+    //     mut _data: StateData<'_, GameData<'_, '_>>,
+    //     event: StateEvent,
+    // ) -> SimpleTrans {
+    //     if let StateEvent::Window(event) = &event {
+    //         // Check if the window should be closed
+    //         if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Escape) {
+    //             return Trans::Quit;
+    //         }
 
-            // Listen to any key events
-            if let Some(event) = get_key(&event) {
-                //log::info!("handling key event: {:?}", event);
-            }
-            // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
-        }
+    //         // Listen to any key events
+    //         if let Some(event) = get_key(&event) {
+    //             //log::info!("handling key event: {:?}", event);
+    //         }
+    //         // https://book.amethyst.rs/stable/pong-tutorial/pong-tutorial-03.html#capturing-user-input
+    //     }
 
-        // Keep going
-        Trans::None
-    }
+    //     // Keep going
+    //     Trans::None
+    // }
     fn update(&mut self, state_data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         let StateData { world, .. } = state_data;
         //log::warn!("playState.update()");

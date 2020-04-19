@@ -76,15 +76,12 @@ impl<'s> System<'s> for InputSystem {
         Read<'s, Time>,
         Read<'s, EventChannel<InputEvent<UserInputBindingTypes>>>,
         ReadStorage<'s, PlayerComponent>,
-        ReadStorage<'s, TilePosition>,
         WriteStorage<'s, InputComponent>,
-        //WriteStorage<'s, Moving>,
-        Entities<'s>,
     );
 
     fn run(
         &mut self,
-        (input, time, input_event_channel, pcs, tile_positions, mut input_components, entities): Self::SystemData,
+        (input, time, input_event_channel, pcs, mut input_components): Self::SystemData,
     ) {
         let t = time.absolute_real_time().as_secs_f64();
         let action_expiry = t + constants::ACTION_DELAY_MS as f64 / 1000.;
@@ -112,7 +109,7 @@ impl<'s> System<'s> for InputSystem {
                         if key == &return_key {
                             let data = self.typed_input.iter().collect::<String>();
                             if data.len() > 0 {
-                                log::info!("action: TypedData({:?})", data);
+                                log::info!("Action: TypedData({:?})", data);
                                 //command_queue.add(Command::TypedData(data));
                             }
                             self.typed_input = Vec::new();
@@ -142,7 +139,7 @@ impl<'s> System<'s> for InputSystem {
                 if input.action_is_down(&action).unwrap() {
                     if try_latch(action.clone(), &mut self.latched_actions, action_expiry) {
                         if action != UserActions::TypingMode {
-                            log::info!("action: {:?}", action);
+                            log::info!("Action: {:?}", action);
                             //command_queue.add(command.clone());
                             cmd_action = Some(action);
                         } else {
