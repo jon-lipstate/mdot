@@ -1,0 +1,82 @@
+[
+    Layer { 
+        name: "ground", 
+        opacity: 1.0, 
+        visible: true, 
+        tiles: [
+            [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 19, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ]
+        ], 
+        properties: {}, 
+        layer_index: 0 
+    }, 
+    Layer { 
+        name: "tree", 
+        opacity: 1.0, 
+        visible: true, 
+        tiles: [
+            [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ], [
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 46, flip_h: false, flip_v: false, flip_d: false }, 
+                LayerTile { gid: 0, flip_h: false, flip_v: false, flip_d: false }
+            ]
+        ], 
+        properties: {}, 
+        layer_index: 1 
+    }
+]

@@ -9,4 +9,4 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Component, Default, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
-pub struct Collider;
+pub struct Collidable;

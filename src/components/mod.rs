@@ -18,3 +18,6 @@ pub use self::animation::Animation;
 
 mod despawn;
 pub use self::despawn::Despawn;
+
+mod collidable;
+pub use self::collidable::Collidable;

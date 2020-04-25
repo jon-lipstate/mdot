@@ -39,12 +39,12 @@ impl Map {
 }
 impl Default for Map {
     fn default() -> Self {
-        let map_path = "assets/maps/town.tmx";
+        let map_path = "assets/maps/first.tmx";
         Map::new(map_path)
     }
 }
 
-fn get_map(map_path: &str) -> tiled::Map {
+pub fn get_map(map_path: &str) -> tiled::Map {
     let file = File::open(&Path::new(&map_path)).expect(map_path);
     let reader = BufReader::new(file);
     let tileset_path = &Path::new("assets/sprites/master16.tsx");

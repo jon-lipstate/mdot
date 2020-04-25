@@ -1,4 +1,4 @@
 (
-  title: "realm.one clone",
-  dimensions: Some((768, 768)),
+  title: "mdot",
+  dimensions: Some((800, 800)),
 )

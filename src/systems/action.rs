@@ -81,7 +81,7 @@ impl<'s> System<'s> for ActionSystem {
                     }
                     UserActions::Move(dir) => {
                         let mvmt = Moving {
-                            start_tile_position: tile.position.clone(),
+                            start_tile_position: tile.clone(),
                             direction: dir.clone(),
                             value: 1,
                             time_remaining: constants::ACTION_DELAY_MS as f32 / 1000.,

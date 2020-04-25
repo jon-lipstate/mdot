@@ -73,10 +73,10 @@ impl<'s> System<'s> for MotionSystem {
                 }
                 if (motion.time_remaining - motion.duration).abs() < 1e-4 {
                     match motion.direction {
-                        Direction::North => tile_pos.position.data[1] += motion.value as isize,
-                        Direction::South => tile_pos.position.data[1] -= motion.value as isize,
-                        Direction::East => tile_pos.position.data[0] += motion.value as isize,
-                        Direction::West => tile_pos.position.data[0] -= motion.value as isize,
+                        Direction::North => tile_pos.y += motion.value as usize,
+                        Direction::South => tile_pos.y -= motion.value as usize,
+                        Direction::East => tile_pos.x += motion.value as usize,
+                        Direction::West => tile_pos.x -= motion.value as usize,
                     };
                     //log::info!("Moved to {:?}", tile_pos.position.data);
                 }

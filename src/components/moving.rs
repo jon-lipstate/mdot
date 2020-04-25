@@ -1,4 +1,4 @@
-use crate::defintions::Direction;
+use crate::{components::TilePosition, defintions::Direction};
 use amethyst::{
     assets::{AssetPrefab, PrefabData},
     core::math::Vector2,
@@ -11,24 +11,23 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Component, Debug, Deserialize, Serialize, PrefabData)]
 #[prefab(Component)]
 pub struct Moving {
-    pub start_tile_position: Vector2<isize>,
+    pub start_tile_position: TilePosition,
     pub direction: Direction,
     pub value: isize,
     pub time_remaining: f32,
     pub duration: f32,
 }
-impl Default for Moving {
-    fn default() -> Self {
+impl Moving {
+    pub fn new(start: TilePosition, dir: Direction, val: isize, duration: f32) -> Self {
         Self {
-            start_tile_position: Vector2::zeros(),
-            direction: Direction::South,
-            value: 0,
-            time_remaining: 0.0,
-            duration: 0.0,
+            start_tile_position: start,
+            direction: dir,
+            value: val,
+            time_remaining: duration,
+            duration,
         }
     }
 }
-
 // impl Moving {
 //     ///Checks the orientation that is present during the movement
 //     pub fn moving_orientation(&self) -> Direction {
